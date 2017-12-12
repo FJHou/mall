@@ -44,7 +44,7 @@
           <div class="filter-nav">
             <span class="sortby">Sort by:</span>
             <a href="javascript:void(0)" class="default cur">Default</a>
-            <a href="javascript:void(0)" class="price">Price <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
+            <a href="javascript:void(0)" class="price" @click="goodSort">Price <svg class="icon icon-arrow-short" style="color: #333"><use xlink:href="#icon-arrow-short"></use></svg></a>
             <a href="javascript:void(0)" class="filterby stopPop">Filter by</a>
           </div>
           <div class="accessory-result">
@@ -72,19 +72,19 @@
             <div class="accessory-list-wrap">
               <div class="accessory-list col-4">
                 <ul>
-                  <li>
+                  <li v-for="good in goodsList" :key="good._id" :data-id="good._id">
                     <div class="pic">
-                      <a href="#"><img src="static/1.jpg" alt=""></a>
+                      <a href="#"><img :src="'/static/' + good.productImage" alt=""></a>
                     </div>
                     <div class="main">
-                      <div class="name">XX</div>
-                      <div class="price">999</div>
+                      <div class="name">{{good.productName}}</div>
+                      <div class="price">{{good.salePrice}}元</div>
                       <div class="btn-area">
                         <a href="javascript:;" class="btn btn--m">加入购物车</a>
                       </div>
                     </div>
                   </li>
-                  <li>
+<!--                   <li>
                     <div class="pic">
                       <a href="#"><img src="static/2.jpg" alt=""></a>
                     </div>
@@ -119,8 +119,11 @@
                         <a href="javascript:;" class="btn btn--m">加入购物车</a>
                       </div>
                     </div>
-                  </li>
+                  </li> -->
                 </ul>
+                <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+                  ...
+                </div>
               </div>
             </div>
           </div>
@@ -157,11 +160,66 @@
     </div>
 </template>
 <script>
-    export default{
-        data(){
-            return {
+  import axios from 'axios'
 
-            }
+  export default{
+    data(){
+      return {
+        currentPage: 1,
+        pageSize: 4,
+        sort: false,
+        goodsList: [],
+        busy: false
+      }
+    },
+    created () {
+      this.getGoodList()
+    },
+    methods: {
+      loadMore () {
+        this.busy = true;
+
+        setTimeout(() => {
+          this.currentPage++
+          this.getGoodList(true)
+          this.busy = false;
+        }, 1000);
+      },
+      getGoodList (flag) {
+        let params = {
+          page: this.currentPage,
+          pageSize: this.pageSize,
+          sort: this.sort ? 1 : -1
         }
+        axios.get('/apis/goods', {
+          params: params
+        }).then((res) => {
+          if (res.data.status === '200') {
+            console.log(res.data)
+            if (flag) {
+              this.goodsList = this.goodsList.concat(res.data.result.list)
+
+              if (res.data.result.count == 0) {
+                this.busy = true
+                console.log(this.busy)
+              }
+            } else {
+              this.goodsList = res.data.result.list
+            }
+          }
+          // console.log(this.goodsList)
+        }).catch((err) => {
+
+        })
+      },
+      goodSort () {
+        this.sort = !this.sort
+      }
+    },
+    watch: {
+      sort () {
+        this.getGoodList()
+      }
     }
+  }
 </script>
