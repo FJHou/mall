@@ -44,11 +44,19 @@
                 <ul>
                   <li class="regi_form_input">
                     <i class="icon IconPeople"></i>
-                    <input type="text" tabindex="1" name="loginname" class="regi_login_input">
+                    <input type="text" 
+                          tabindex="1" 
+                          name="loginname" 
+                          class="regi_login_input"
+                          v-model="userName">
                   </li>
                   <li class="regi_form_input noMargin">
                     <i class="icon IconPwd"></i>
-                    <input type="password" tabindex="2" name="password" class="regi_login_input">
+                    <input type="password" 
+                          tabindex="2" 
+                          name="password" 
+                          class="regi_login_input" 
+                          v-model="userPwd">
                   </li>
                 </ul>
               </div>
@@ -149,6 +157,8 @@
   export default{
     data(){
       return {
+        userName: '',
+        userPwd: '',
         modalShow: false,
         priceFilterGroup: [
           'All',
@@ -171,7 +181,14 @@
     },
     methods: {
       login () {
-        
+        axios.post('/apis/users/login', {
+          userName: this.userName,
+          userPwd: this.userPwd
+        }).then((res) => {
+          console.log(res)
+        }).catch((err) => {
+          console.log(err)
+        })       
       },
       loginModal () {
         this.modalShow = true
