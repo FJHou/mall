@@ -17,7 +17,7 @@
             <div class="navbar-menu-container">
               <!--<a href="/" class="navbar-link">我的账户</a>-->
               <span class="navbar-link"></span>
-              <a href="javascript:void(0)" class="navbar-link">Login</a>
+              <a href="javascript:void(0)" class="navbar-link" @click="loginModal">Login</a>
               <a href="javascript:void(0)" class="navbar-link">Logout</a>
               <div class="navbar-cart-container">
                 <span class="navbar-cart-count"></span>
@@ -30,6 +30,35 @@
             </div>
           </div>
         </div>
+        <div class="md-modal modal-msg md-modal-transition" :class="modalShow ? 'md-show' : ''">
+          <div class="md-modal-inner">
+            <div class="md-top">
+              <div class="md-title">Login in</div>
+              <button class="md-close" @click="closeModal">Close</button>
+            </div>
+            <div class="md-content">
+              <div class="confirm-tips">
+                <div class="error-wrap">
+                  <span class="error error-show">用户名或者密码错误</span>
+                </div>
+                <ul>
+                  <li class="regi_form_input">
+                    <i class="icon IconPeople"></i>
+                    <input type="text" tabindex="1" name="loginname" class="regi_login_input">
+                  </li>
+                  <li class="regi_form_input noMargin">
+                    <i class="icon IconPwd"></i>
+                    <input type="password" tabindex="2" name="password" class="regi_login_input">
+                  </li>
+                </ul>
+              </div>
+              <div class="login-wrap">
+                <a href="javascript:;" class="btn-login" @click="login">登录</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="md-overlay" v-show="modalShow"></div>
       </header>
       <div class="nav-breadcrumb-wrap">
         <div class="container">
@@ -69,7 +98,7 @@
                       <div class="name">{{good.productName}}</div>
                       <div class="price">{{good.salePrice}}元</div>
                       <div class="btn-area">
-                        <a href="javascript:;" class="btn btn--m">加入购物车</a>
+                        <a href="javascript:;" class="btn btn--m" @click="addCart(good.productId)">加入购物车</a>
                       </div>
                     </div>
                   </li>
@@ -114,11 +143,13 @@
     </div>
 </template>
 <script>
+  import './../assets/css/login.css'
   import axios from 'axios'
 
   export default{
     data(){
       return {
+        modalShow: false,
         priceFilterGroup: [
           'All',
           '0 - 100',
@@ -130,13 +161,33 @@
         pageSize: 50,
         sort: false,
         goodsList: [],
-        busy: false
+        busy: false,
+        minPrice: '',
+        maxPrice: ''
       }
     },
     created () {
       this.getGoodList()
     },
     methods: {
+      login () {
+        
+      },
+      loginModal () {
+        this.modalShow = true
+      },
+      closeModal () {
+        this.modalShow = false
+      },
+      addCart (productId) {
+        axios.post('/apis/goods/addCart', {
+          productId: productId
+        }).then((res) => {
+          console.log(res)
+        }).catch((err) => {
+          console.log(err)
+        })
+      },
       loadMore () {
         // this.busy = true;
 
@@ -147,35 +198,36 @@
         // }, 1000);
       },
       filterGoodsByPriceRange (priceRange) {
-        let price = priceRange.match(/\d+/g)
-        console.log(price)
+        let price = priceRange.match(/\d+/g) || ['', '']
+        this.minPrice = price[0]
+        this.maxPrice = price[1]
         this.currentPage = 1
         let params = {
           page: this.currentPage,
           pageSize: this.pageSize,
           sort: this.sort ? 1 : -1,
-          minPrice: price[0],
-          maxPrice: price[1]
+          minPrice: this.minPrice,
+          maxPrice: this.maxPrice
         }
         axios.get('/apis/goods', {
           params: params
         }).then((res) => {
           console.log(res)
           if (res.data.status === '200') {
-              console.log(res.data.result.list)
-              this.goodsList = res.data.result.list
-            
+            console.log(res.data.result.list)
+            this.goodsList = res.data.result.list
           }
         }).catch((err) => {
 
         })        
       },
-      getGoodList (flag, priceRange = '') {
+      getGoodList (flag) {
         let params = {
           page: this.currentPage,
           pageSize: this.pageSize,
           sort: this.sort ? 1 : -1,
-          priceRange: priceRange.match(/\d+/g)
+          minPrice: this.minPrice,
+          maxPrice: this.maxPrice
         }
         axios.get('/apis/goods', {
           params: params

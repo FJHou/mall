@@ -26,16 +26,14 @@ router.get('/', (req, res, next) => {
 	let skip = (page - 1) * pageSize
 	let params = {}
 
-	if(maxPrice && minPrice) {
+	if(maxPrice || minPrice) {
 		params = {
 			salePrice: {
 				$gt: +minPrice,
 				$lte: +maxPrice
 			}
 		}
-		console.log('maxPrice:' + maxPrice + 'maxPrice:' + maxPrice);
 	}
-	
 	let goodsModel = Goods.find(params).skip(skip).limit(pageSize)
 	goodsModel.sort({'salePrice':sort})
 	goodsModel.exec((err, doc) => {
@@ -53,6 +51,67 @@ router.get('/', (req, res, next) => {
 					list: doc
 				}
 			})
+		}
+	})
+})
+
+router.post('/addCart', (req, res, next) => {
+	let userId = '100000077'
+	let productId = req.body.productId
+	const User = require('../models/users')
+	console.log(req.body.productId)
+	User.findOne({userId: userId}, (err, userDoc) => {
+		if (err) {
+			res.json({
+				status: '1',
+				msg: err.message
+			})
+
+			return
+		}
+		console.log('----------------')
+		if (userDoc) {
+			Goods.findOne({productId: productId}, (goodsErr, goodsDoc) => {
+				if (goodsErr) {
+					res.json({
+						status: '1',
+						msg: goodsErr.message
+					});
+
+					return;
+				}
+				console.log(goodsDoc)
+				if (goodsDoc) {
+					goodsDoc.productCount = 1;
+					goodsDoc.checked = true;
+					userDoc.cartList.push(goodsDoc)
+					userDoc.save((saveErr, saveDoc) => {
+						if (saveErr) {
+							res.json({
+								status: '1',
+								msg: saveErr.message
+							});
+
+							return						
+						}
+
+						res.json({
+							status: '1',
+							msg: 'add success'						
+						})
+					})
+				} else {
+					res.json({
+						status: '1',
+						msg: '没有找到相关产品'						
+					})
+				}
+			})
+		} else {
+			res.json({
+				status: '1',
+				msg: '没有找到该用户'						
+			})			
 		}
 	})
 })
