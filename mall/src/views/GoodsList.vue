@@ -39,7 +39,7 @@
             <div class="md-content">
               <div class="confirm-tips">
                 <div class="error-wrap">
-                  <span class="error error-show">用户名或者密码错误</span>
+                  <span class="error error-show" v-show="loginErr">用户名或者密码错误</span>
                 </div>
                 <ul>
                   <li class="regi_form_input">
@@ -157,6 +157,7 @@
   export default{
     data(){
       return {
+        loginErr: false,
         userName: '',
         userPwd: '',
         modalShow: false,
@@ -180,12 +181,22 @@
       this.getGoodList()
     },
     methods: {
+      resetLoginData () {
+        this.loginErr = false
+        this.userName = ''
+        this.userPwd = ''
+      },
       login () {
         axios.post('/apis/users/login', {
           userName: this.userName,
           userPwd: this.userPwd
         }).then((res) => {
-          console.log(res)
+          if (res.data.status === '0') {
+            this.modalShow = false
+            this.resetLoginData()
+          } else {
+            this.loginErr = true
+          }
         }).catch((err) => {
           console.log(err)
         })       

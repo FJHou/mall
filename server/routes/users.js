@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const User = require('../models/users')
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -11,7 +12,25 @@ router.post('/login', (req, res, next) => {
     userName: req.body.userName,
     userPwd: req.body.userPwd
   }
+  User.findOne({userName: req.body.userName}, (err, doc) => {
+    if (err) {
+      res.json({
+        status: '1',
+        msg: err.message
+      })
 
+      return
+    }
+
+    if (!doc) {
+      res.json({
+        status: '1',
+        msg: '该用户不存在'     
+      })
+
+      return
+    }
+  })
   User.findOne(params, (err, doc) => {
     if (err) {
       res.json({
@@ -35,6 +54,11 @@ router.post('/login', (req, res, next) => {
           userName: doc.userName
         }
       });
+    } else {
+      res.json({
+        status: '400',
+        msg: '用户名或密码错误'
+      })
     }
   })
 })
