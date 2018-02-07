@@ -1,6 +1,7 @@
 <template>
     <div>
-      <header class="header">
+      <Navbar></Navbar>
+      <!-- <header class="header">
         <symbol id="icon-cart" viewBox="0 0 38 32">
           <title>cart</title>
           <path class="path1" d="M37.759 0h-4.133c-0.733 0.004-1.337 0.549-1.434 1.255l-0.546 4.342c-0.081 0.484-0.496 0.849-0.997 0.849-0.005 0-0.009-0-0.014-0h-27.604c-0.003 0-0.007-0-0.011-0-1.674 0-3.031 1.357-3.031 3.031 0 0.34 0.056 0.666 0.159 0.971l2.52 8.062c0.385 1.194 1.486 2.043 2.785 2.043 0.126 0 0.25-0.008 0.372-0.023l22.983 0.002c0.515 0.131 0.626 0.768 0.626 1.283 0.005 0.044 0.009 0.095 0.009 0.146 0 0.501-0.294 0.933-0.718 1.134l-22.439 0.003c-0.354 0-0.642 0.287-0.642 0.642s0.287 0.642 0.642 0.642h22.745l0.131-0.071c0.919-0.392 1.551-1.287 1.551-2.33 0-0.058-0.002-0.116-0.006-0.173 0.021-0.108 0.033-0.24 0.033-0.376 0-1.072-0.732-1.973-1.724-2.23l-23.357-0.004c-0.063 0.008-0.135 0.013-0.209 0.013-0.719 0-1.332-0.455-1.566-1.093l-2.53-8.095c-0.048-0.154-0.076-0.332-0.076-0.515 0-0.973 0.782-1.764 1.752-1.778h27.657c1.159-0.004 2.112-0.883 2.232-2.011l0.547-4.345c0.010-0.083 0.078-0.147 0.161-0.152l4.133-0c0.354 0 0.642-0.287 0.642-0.642s-0.287-0.642-0.642-0.642z"></path>
@@ -15,10 +16,10 @@
           </div>
           <div class="navbar-right-container" style="display: flex;">
             <div class="navbar-menu-container">
-              <!--<a href="/" class="navbar-link">我的账户</a>-->
+              <a href="/" class="navbar-link">我的账户</a>
               <span class="navbar-link"></span>
-              <a href="javascript:void(0)" class="navbar-link" @click="loginModal">Login</a>
-              <a href="javascript:void(0)" class="navbar-link">Logout</a>
+              <a href="javascript:void(0)" class="navbar-link" @click="loginModal">{{userNameNav}}</a>
+              <a href="javascript:void(0)" class="navbar-link" @click="logOut">Logout</a>
               <div class="navbar-cart-container">
                 <span class="navbar-cart-count"></span>
                 <a class="navbar-link navbar-cart-link" href="/#/cart">
@@ -67,7 +68,7 @@
           </div>
         </div>
         <div class="md-overlay" v-show="modalShow"></div>
-      </header>
+      </header> -->
       <div class="nav-breadcrumb-wrap">
         <div class="container">
           <nav class="nav-breadcrumb">
@@ -151,16 +152,17 @@
     </div>
 </template>
 <script>
-  import './../assets/css/login.css'
+  import Navbar from '@/components/Navbar'
   import axios from 'axios'
 
   export default{
     data(){
       return {
-        loginErr: false,
-        userName: '',
-        userPwd: '',
-        modalShow: false,
+        // loginErr: false,
+        // userNameNav: 'Login',
+        // userName: '',
+        // userPwd: '',
+        // modalShow: false,
         priceFilterGroup: [
           'All',
           '0 - 100',
@@ -180,33 +182,44 @@
     created () {
       this.getGoodList()
     },
+    components: {
+      Navbar
+    },
     methods: {
-      resetLoginData () {
-        this.loginErr = false
-        this.userName = ''
-        this.userPwd = ''
-      },
-      login () {
-        axios.post('/apis/users/login', {
-          userName: this.userName,
-          userPwd: this.userPwd
-        }).then((res) => {
-          if (res.data.status === '0') {
-            this.modalShow = false
-            this.resetLoginData()
-          } else {
-            this.loginErr = true
-          }
-        }).catch((err) => {
-          console.log(err)
-        })       
-      },
-      loginModal () {
-        this.modalShow = true
-      },
-      closeModal () {
-        this.modalShow = false
-      },
+      // resetLoginData () {
+      //   this.loginErr = false
+      //   this.userName = ''
+      //   this.userPwd = ''
+      // },
+      // logOut () {
+      //   axios.post('/apis/users/logout')
+      //        .then((res) => {
+      //          if (res.data.status === '0') {
+      //            console.log('退出登录')
+      //          }
+      //        })
+      // },
+      // login () {
+      //   axios.post('/apis/users/login', {
+      //     userName: this.userName,
+      //     userPwd: this.userPwd
+      //   }).then((res) => {
+      //     if (res.data.status === '0') {
+      //       this.modalShow = false
+      //       this.resetLoginData()
+      //     } else {
+      //       this.loginErr = true
+      //     }
+      //   }).catch((err) => {
+      //     console.log(err)
+      //   })       
+      // },
+      // loginModal () {
+      //   this.modalShow = true
+      // },
+      // closeModal () {
+      //   this.modalShow = false
+      // },
       addCart (productId) {
         axios.post('/apis/goods/addCart', {
           productId: productId

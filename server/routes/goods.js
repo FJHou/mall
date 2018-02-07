@@ -34,6 +34,7 @@ router.get('/', (req, res, next) => {
 			}
 		}
 	}
+
 	let goodsModel = Goods.find(params).skip(skip).limit(pageSize)
 	goodsModel.sort({'salePrice':sort})
 	goodsModel.exec((err, doc) => {
@@ -59,7 +60,7 @@ router.post('/addCart', (req, res, next) => {
 	let userId = '100000077'
 	let productId = req.body.productId
 	const User = require('../models/users')
-	console.log(req.body.productId)
+
 	User.findOne({userId: userId}, (err, userDoc) => {
 		if (err) {
 			res.json({
@@ -69,7 +70,7 @@ router.post('/addCart', (req, res, next) => {
 
 			return
 		}
-		console.log('----------------')
+
 		if (userDoc) {
 			Goods.findOne({productId: productId}, (goodsErr, goodsDoc) => {
 				if (goodsErr) {
@@ -80,9 +81,19 @@ router.post('/addCart', (req, res, next) => {
 
 					return;
 				}
-				console.log(goodsDoc)
+
 				if (goodsDoc) {
-					goodsDoc.productCount = 1;
+					console.log(goodsDoc)
+					console.log(goodsDoc.productNum)
+					let newCartList = userDoc.cartList.map((item) => {
+						if (item._id === goodsDoc._id) {
+							item.productNum 
+						}
+					})
+					if (isCartExist) {
+
+					}
+					goodsDoc.productNum = '1';
 					goodsDoc.checked = true;
 					userDoc.cartList.push(goodsDoc)
 					userDoc.save((saveErr, saveDoc) => {
@@ -100,18 +111,8 @@ router.post('/addCart', (req, res, next) => {
 							msg: 'add success'						
 						})
 					})
-				} else {
-					res.json({
-						status: '1',
-						msg: '没有找到相关产品'						
-					})
 				}
 			})
-		} else {
-			res.json({
-				status: '1',
-				msg: '没有找到该用户'						
-			})			
 		}
 	})
 })
