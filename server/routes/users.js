@@ -12,25 +12,6 @@ router.post('/login', (req, res, next) => {
     userName: req.body.userName,
     userPwd: req.body.userPwd
   }
-  // User.findOne({userName: req.body.userName}, (err, doc) => {
-  //   if (err) {
-  //     res.json({
-  //       status: '1',
-  //       msg: err.message
-  //     })
-
-  //     return
-  //   }
-
-  //   if (!doc) {
-  //     res.json({
-  //       status: '1',
-  //       msg: '该用户不存在'     
-  //     })
-
-  //     return
-  //   }
-  // })
   User.findOne(params, (err, doc) => {
     if (err) {
       res.json({
@@ -99,4 +80,38 @@ router.post('/getCartList', (req, res, next) => {
     }
   })
 })
+
+router.post('/delGoods', (req, res, next) => {
+  let userId = req.cookies.userId;
+  let productId = req.body.productId;
+  console.log(productId)
+  User.update(
+    {userId: userId}, 
+    // $pull 删除mongodb里的元素
+    {
+      $pull: {
+        'cartList': {
+          'productId': productId
+        }
+      }
+    },
+    (err, doc) => {
+      if (err) {
+        res.json({
+          status: '1',
+          msg: err.message
+        })
+  
+        return
+      }
+      if (doc) {
+        res.json({
+          status: '0',
+          msg: '删除成功'
+        })
+      }
+    }
+  )
+})
+
 module.exports = router;

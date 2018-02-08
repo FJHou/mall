@@ -10,10 +10,10 @@ const userSchema = new Schema({
     {
       'productId': String,
       'productName': String,
-      'salePrice': String,
+      'salePrice': Number,
       'productImage': String,
       'checked': Boolean,
-      'productCount': String
+      'productNum': Number
     }
   ],
   'addressList': Array

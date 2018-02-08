@@ -83,19 +83,21 @@ router.post('/addCart', (req, res, next) => {
 				}
 
 				if (goodsDoc) {
-					console.log(goodsDoc)
-					console.log(goodsDoc.productNum)
-					let newCartList = userDoc.cartList.map((item) => {
-						if (item._id === goodsDoc._id) {
-							item.productNum 
-						}
+					
+					
+					let ExistIndex = 0;
+					let isCartExist = userDoc.cartList.some((item, index) => {
+						ExistIndex = index
+						return item.productId === goodsDoc.productId
 					})
 					if (isCartExist) {
-
+						userDoc.cartList[ExistIndex].productNum++
+					} else {
+						goodsDoc.productNum = 1;
+						goodsDoc.checked = true;
+						userDoc.cartList.push(goodsDoc);
 					}
-					goodsDoc.productNum = '1';
-					goodsDoc.checked = true;
-					userDoc.cartList.push(goodsDoc)
+					
 					userDoc.save((saveErr, saveDoc) => {
 						if (saveErr) {
 							res.json({
