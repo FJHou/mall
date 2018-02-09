@@ -5,7 +5,9 @@
     export default{
       data(){
         return{
-          cartList: []
+          cartList: [],
+          totalPrice: 0,
+          isAllCheck: true
         }
       },
       components: {
@@ -16,20 +18,49 @@
         this.getCartList()
       },
       computed: {
-
+        isGoodsAllChecked () {
+          return this.cartList.every((item) => {
+            return item.checked === true
+          })
+        }
       },
       methods: {
+        toggleAllCheck () {
+          this.cartList.forEach((item) => {
+            if (!item.checked) {
+              item.checked = true
+            } else {
+              item.checked = false
+            } 
+          })
+        },
+        toggleCheck (item) {
+          console.log(item)
+          item.checked = !item.checked
+        },
         cartIncrease (item) {
           item.productNum++
         },
         cartDecrease (item) {
           if (item.productNum <= 0) {
             // 调删除接口
-
+            // this.delGoods()
             return
           }
           item.productNum--
         },
+        countTotalPrice () {
+          this.totalPrice = this.cartList.map((item) => {
+            if (item.checked) {
+              return item.salePrice * item.productNum
+            } else {
+              return 0
+            }
+          }).reduce((sum, item) => {
+            return sum + item
+          })
+        },
+
         getCartList () {
           axios.post('apis/users/getCartList', {
             userId: '100000077'
@@ -47,6 +78,14 @@
               this.getCartList()
             }         
           })
+        }
+      },
+      watch: {
+        cartList: {
+          handler () {
+            this.countTotalPrice()
+          },
+          deep:true
         }
       }
     }
@@ -120,7 +159,10 @@
               <li v-for="(item, index) in cartList" :key="index">
                 <div class="cart-tab-1">
                   <div class="cart-item-check">
-                    <a href="javascipt:;" class="checkbox-btn item-check-btn">
+                    <a href="javascipt:;" 
+                      class="checkbox-btn item-check-btn" 
+                      :class="item.checked ? 'check': ''"
+                      @click="toggleCheck(item)">
                       <svg class="icon icon-ok">
                         <use xlink:href="#icon-ok"></use>
                       </svg>
@@ -168,7 +210,9 @@
             <div class="cart-foot-l">
               <div class="item-all-check">
                 <a href="javascipt:;">
-                  <span class="checkbox-btn item-check-btn">
+                  <span class="checkbox-btn item-check-btn"
+                        :class="isGoodsAllChecked ? 'check': ''" 
+                        @click="toggleAllCheck">
                       <svg class="icon icon-ok"><use xlink:href="#icon-ok"/></svg>
                   </span>
                   <span>Select all</span>
@@ -177,7 +221,7 @@
             </div>
             <div class="cart-foot-r">
               <div class="item-total">
-                Item total: <span class="total-price"></span>
+                Item total: <span class="total-price">{{totalPrice}}</span>
               </div>
               <div class="btn-wrap">
                 <a class="btn btn--red">Checkout</a>

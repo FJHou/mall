@@ -21,7 +21,6 @@ router.post('/login', (req, res, next) => {
 
       return
     }
-
     if (doc) {
       res.cookie('userId', doc.userId, {
         path: '/',
@@ -31,7 +30,7 @@ router.post('/login', (req, res, next) => {
         status: '0',
         msg: 'login success',
         result: {
-          name: doc.name
+          name: doc.userName
         }
       });
     } else {
@@ -84,9 +83,9 @@ router.post('/getCartList', (req, res, next) => {
 router.post('/delGoods', (req, res, next) => {
   let userId = req.cookies.userId;
   let productId = req.body.productId;
-  console.log(productId)
-  User.update(
-    {userId: userId}, 
+  User.update({
+      userId: userId
+    }, 
     // $pull 删除mongodb里的元素
     {
       $pull: {
@@ -96,6 +95,7 @@ router.post('/delGoods', (req, res, next) => {
       }
     },
     (err, doc) => {
+      console.log(doc)
       if (err) {
         res.json({
           status: '1',
