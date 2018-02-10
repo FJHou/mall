@@ -22,27 +22,36 @@
           return this.cartList.every((item) => {
             return item.checked === true
           })
+        },
+        canCheckOut () {
+          return this.cartList.some((item) => {
+            return item.checked === true
+          })
         }
       },
       methods: {
+        checkOut () {
+
+        },
         toggleAllCheck () {
-          this.cartList.forEach((item) => {
-            if (!item.checked) {
-              item.checked = true
-            } else {
+          if (this.isGoodsAllChecked) {
+            this.cartList.forEach((item) => {
               item.checked = false
-            } 
+            })   
+            return        
+          }
+          this.cartList.forEach((item) => {
+            item.checked = true
           })
         },
         toggleCheck (item) {
-          console.log(item)
           item.checked = !item.checked
         },
         cartIncrease (item) {
           item.productNum++
         },
         cartDecrease (item) {
-          if (item.productNum <= 0) {
+          if (item.productNum <= 1) {
             // 调删除接口
             // this.delGoods()
             return
@@ -224,7 +233,9 @@
                 Item total: <span class="total-price">{{totalPrice}}</span>
               </div>
               <div class="btn-wrap">
-                <a class="btn btn--red">Checkout</a>
+                <a class="btn btn--red" 
+                  :class="canCheckOut ? '' : 'btn--dis'"
+                  @click="checkOut">Checkout</a>
               </div>
             </div>
           </div>

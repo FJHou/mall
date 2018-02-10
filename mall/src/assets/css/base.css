@@ -590,6 +590,7 @@ a:hover {
   background-color: #ccc;
   color: #fff;
   cursor: default;
+  pointer-events: none;
 }
 
 .btn--red.btn--dis:hover {
