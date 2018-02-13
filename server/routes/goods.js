@@ -18,11 +18,11 @@ mongoose.connection.on('disconnected', () => {
 })
 
 router.get('/', (req, res, next) => {
-	let page = parseInt(req.param('page'))
-	let pageSize = parseInt(req.param('pageSize'))
-	let minPrice = req.param('minPrice')
-	let maxPrice = req.param('maxPrice')
-	let sort = req.param('sort')
+	let page = parseInt(req.params('page'))
+	let pageSize = parseInt(req.params('pageSize'))
+	let minPrice = req.params('minPrice')
+	let maxPrice = req.params('maxPrice')
+	let sort = req.params('sort')
 	let skip = (page - 1) * pageSize
 	let params = {}
 

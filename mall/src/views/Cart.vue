@@ -31,7 +31,10 @@
       },
       methods: {
         checkOut () {
-
+          console.log(1)
+          this.$router.push({
+            path: '/address'
+          })
         },
         toggleAllCheck () {
           if (this.isGoodsAllChecked) {

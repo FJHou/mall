@@ -95,7 +95,6 @@ router.post('/delGoods', (req, res, next) => {
       }
     },
     (err, doc) => {
-      console.log(doc)
       if (err) {
         res.json({
           status: '1',
@@ -110,6 +109,65 @@ router.post('/delGoods', (req, res, next) => {
           msg: '删除成功'
         })
       }
+    }
+  )
+})
+
+router.post('/addressList', (req, res, next) => {
+  let userId = req.cookies.userId
+  User.findOne({userId: userId}, (err, doc) => {
+    if (err) {
+      res.json({
+        status: '1',
+        msg: err.message
+      })
+
+      return      
+    }
+
+    if (doc) {
+      res.json({
+        status: '0',
+        msg: '地址列表查询成功',
+        result: {
+          addressList: doc.addressList
+        }
+      })
+    }
+  })
+})
+
+router.post('/addressDel', (req, res, next) => {
+  let userId = req.cookies.userId;
+  let addressId = req.body.addressId;
+  // console.log(addressId)
+  User.update(
+    {
+      userId: userId
+    }, 
+    {
+      $pull:{
+        'addressList': {
+          'addressId': addressId
+        }
+      } 
+    },
+    (err, doc) => {
+      if (err) {
+        res.json({
+          status: '1',
+          msg: err.message
+        })
+
+        return      
+      }
+
+      if (doc) {
+        res.json({
+          status: '0',
+          msg: '删除成功'
+        })      
+      } 
     }
   )
 })
