@@ -156,18 +156,35 @@ router.post('/addressSetDefault', (req, res, next) => {
       }
 
       if (doc) {
-        let addressList = doc.addressList
-        addressList.forEach((item) => {
-          
+        let addressList = doc.addressList.map((item) => {
+          if (item.addressId === addressId) {
+            item.isDefault = true
+          } else {
+            item.isDefault = false
+          }
+
+          return item
         })
-        res.json({
-          status: '0',
-          msg: '删除成功'
-        })      
+        doc.save((err1, doc1) => {
+          if (err) {
+            res.json({
+              status: '1',
+              msg: err.message,
+              result: ''
+            }) 
+          } else {
+            res.json({
+              status: '0',
+              msg: '设置成功',
+              result: addressList
+            })
+          }
+        })
+     
       } 
     }
   )
-}
+})
 
 
 router.post('/addressDel', (req, res, next) => {

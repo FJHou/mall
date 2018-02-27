@@ -42,7 +42,16 @@
           }
         })
       },
-      setDefaultAddress (index) {
+      setDefaultAddress (index, addressId) {
+        axios.post('apis/users/addressSetDefault', {
+          addressId: addressId
+        }).then((res) => {
+          if (res.data.status === '0') {
+            this._execSetDefaultAddress(index)
+          }
+        })
+      },
+      _execSetDefaultAddress (index) {
         this.addressList.forEach((address, idx) => {
           if (index === idx) {
             address.isDefault = true
@@ -146,7 +155,7 @@
                     </div>
                     <div class="addr-opration addr-set-default" 
                          v-if="!address.isDefault" 
-                         @click="setDefaultAddress(index)">
+                         @click="setDefaultAddress(index, address.addressId)">
                       <a href="javascript:;" class="addr-set-default-btn"><i>Set default</i></a>
                     </div>
                     <div class="addr-opration addr-default" v-else>

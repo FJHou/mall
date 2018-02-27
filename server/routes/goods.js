@@ -58,8 +58,8 @@ router.get('/', (req, res, next) => {
 })
 
 router.post('/addCart', (req, res, next) => {
-	let userId = '100000077'
-	let productId = req.body.productId
+	let userId = req.cookies.userId;
+	let productId = req.body.productId;
 	const User = require('../models/users')
 
 	User.findOne({userId: userId}, (err, userDoc) => {
