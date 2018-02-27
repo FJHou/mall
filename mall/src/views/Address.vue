@@ -5,19 +5,32 @@
   export default{
     data(){
       return{
-        addressList: []
+        addressList: [],
+        limit: 3
+      }
+    },
+    computed: {
+      addressListLimit () {
+        return this.addressList.slice(0, this.limit)
       }
     },
     created () {
       this.getAddressList()
     },
     methods: {
+      toggleExpand () {
+        if (this.limit > 3) {
+          this.limit = 3
+        } else {
+          this.limit = this.addressList.length
+        }
+      },
       addressDel (id) {
         axios.post('apis/users/addressDel',{
           addressId: id
         }).then((res) => {
           if (res.data.status === '0') {
-            console.log(this.addressList)
+            this.getAddressList()
           }
         })
       },
@@ -120,7 +133,7 @@
             <div class="addr-list-wrap">
               <div class="addr-list">
                 <ul>
-                  <li v-for="(address, index) in addressList" :key="index"> 
+                  <li v-for="(address, index) in addressListLimit" :key="index"> 
                     <dl>
                       <dt>{{address.userName}}</dt>
                       <dd class="address">{{address.streetName}}</dd>
@@ -167,7 +180,7 @@
                 </ul>
               </div>
 
-              <div class="shipping-addr-more" v-if="addressList.length > 7">
+              <div class="shipping-addr-more" @click="toggleExpand">
                 <a class="addr-more-btn up-down-btn" href="javascript:;">
                   more
                   <i class="i-up-down">

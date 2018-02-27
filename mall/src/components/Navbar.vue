@@ -18,8 +18,13 @@
           <div class="navbar-menu-container">
             <!--<a href="/" class="navbar-link">我的账户</a>-->
             <span class="navbar-link"></span>
-            <a href="javascript:void(0)" class="navbar-link" @click="loginModal">{{userNameNav}}</a>
-            <a href="javascript:void(0)" class="navbar-link" @click="logOut">Logout</a>
+            <p>
+              <!-- <a href="javascript:void(0)" class="navbar-link" v-if="userNameNav"></a> -->
+              <a href="javascript:void(0)" class="navbar-link" @click="loginModal">{{userNameNav}}</a>
+            </p>
+            
+              <a href="javascript:void(0)" class="navbar-link" @click="logOut">Logout</a>
+            
             <div class="navbar-cart-container">
               <span class="navbar-cart-count"></span>
               <a class="navbar-link navbar-cart-link" href="/#/cart">
@@ -110,6 +115,7 @@ export default {
         }).then((res) => {
           if (res.data.status === '0') {
             this.modalShow = false
+            this.userNameNav = res.data.result.name
             this.resetLoginData()
           } else {
             this.loginErr = true

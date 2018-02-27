@@ -137,6 +137,39 @@ router.post('/addressList', (req, res, next) => {
   })
 })
 
+router.post('/addressSetDefault', (req, res, next) => {
+  let userId = req.cookies.userId;
+  let addressId = req.body.addressId;
+  // console.log(addressId)
+  User.findOne(
+    {
+      userId: userId
+    }, 
+    (err, doc) => {
+      if (err) {
+        res.json({
+          status: '1',
+          msg: err.message
+        })
+
+        return      
+      }
+
+      if (doc) {
+        let addressList = doc.addressList
+        addressList.forEach((item) => {
+          
+        })
+        res.json({
+          status: '0',
+          msg: '删除成功'
+        })      
+      } 
+    }
+  )
+}
+
+
 router.post('/addressDel', (req, res, next) => {
   let userId = req.cookies.userId;
   let addressId = req.body.addressId;
@@ -171,5 +204,7 @@ router.post('/addressDel', (req, res, next) => {
     }
   )
 })
+
+
 
 module.exports = router;
