@@ -67,6 +67,11 @@
             console.log(this.addressList)
           }
         })
+      },
+      enterOrderConfirm () {
+        this.$router.push({
+          path: '/orderConfirm'
+        })
       }
     },
     components: {
@@ -218,7 +223,7 @@
               </div>
             </div>
             <div class="next-btn-wrap">
-              <a class="btn btn--m btn--red" href="#">Next</a>
+              <a class="btn btn--m btn--red" @click="enterOrderConfirm">Next</a>
             </div>
           </div>
         </div>
