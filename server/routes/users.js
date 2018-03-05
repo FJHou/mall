@@ -222,6 +222,26 @@ router.post('/addressDel', (req, res, next) => {
   )
 })
 
+router.post('/getOrderList', (req, res, next) => {
+  let userId = req.cookies.userId
+  User.findOne({userId: userId}, (err, doc) => {
+    if (err) {
+      res.json({
+        status: '1',
+        msg: err.message
+      })
 
+      return
+    }
+
+    if (doc) {
+      res.json({
+        status: '0',
+        msg: '购物车查询成功',
+        result: doc.orderList
+      })
+    }
+  })
+})
 
 module.exports = router;

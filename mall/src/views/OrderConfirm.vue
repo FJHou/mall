@@ -124,7 +124,7 @@
             <a class="btn btn--m">Previous</a>
           </div>
           <div class="next-btn-wrap">
-            <button class="btn btn--m btn--red">Proceed to payment</button>
+            <button class="btn btn--m btn--red" @click="enter">Proceed to payment</button>
           </div>
         </div>
       </div>
@@ -141,6 +141,16 @@
         return{
 
         }
+    },
+    created () {
+      axios.post('apis/users/getOrderList').then((res) => {
+        console.log(res)
+      })
+    },
+    methods: {
+      enter () {
+
+      }
     },
     components: {
       Navbar,
