@@ -60,44 +60,43 @@
               </ul>
             </div>
             <ul class="cart-item-list">
-              <li>
+              <li v-for="(item, index) in orderList" :key="index">
                 <div class="cart-tab-1">
                   <div class="cart-item-pic">
-                    <img src="/static/1.jpg" alt="XX">
+                    <img :src="'/static/'+item.productImage" :alt="item.productName">
                   </div>
                   <div class="cart-item-title">
-                    <div class="item-name">XX</div>
+                    <div class="item-name">{{item.productName}}</div>
 
                   </div>
                 </div>
                 <div class="cart-tab-2">
-                  <div class="item-price">199</div>
+                  <div class="item-price">{{item.salePrice}}</div>
                 </div>
                 <div class="cart-tab-3">
                   <div class="item-quantity">
                     <div class="select-self">
                       <div class="select-self-area">
-                        <span class="select-ipt">×5</span>
+                        <span class="select-ipt">×{{item.productNum}}</span>
                       </div>
                     </div>
                     <div class="item-stock item-stock-no">In Stock</div>
                   </div>
                 </div>
                 <div class="cart-tab-4">
-                  <div class="item-price-total">5000</div>
+                  <div class="item-price-total">{{item.productNum * item.salePrice}}</div>
                 </div>
               </li>
             </ul>
           </div>
         </div>
-
         <!-- Price count -->
         <div class="price-count-wrap">
           <div class="price-count">
             <ul>
               <li>
                 <span>Item subtotal:</span>
-                <span>5000</span>
+                <span>{{countSubTotal}}</span>
               </li>
               <li>
                 <span>Shipping:</span>
@@ -113,7 +112,7 @@
               </li>
               <li class="order-total-price">
                 <span>Order total:</span>
-                <span>5230</span>
+                <span>{{countSubTotal + 30 + 100 + 300}}</span>
               </li>
             </ul>
           </div>
@@ -121,7 +120,7 @@
 
         <div class="order-foot-wrap">
           <div class="prev-btn-wrap">
-            <a class="btn btn--m">Previous</a>
+            <a class="btn btn--m" @click="preious">Previous</a>
           </div>
           <div class="next-btn-wrap">
             <button class="btn btn--m btn--red" @click="enter">Proceed to payment</button>
@@ -138,18 +137,39 @@
   import axios from 'axios'
   export default{
     data(){
-        return{
-
-        }
+      return{
+        orderList: []
+      }
     },
     created () {
-      axios.post('apis/users/getOrderList').then((res) => {
+      axios.post('apis/users/getCartList', {
+        userId: '100000077'
+      }).then((res) => {
         console.log(res)
+        if (res.data.status === '0') {
+          console.log(res.data.result)
+          this.orderList = res.data.result
+        }
       })
+    },
+    computed: {
+      countSubTotal () {
+        return this.orderList
+        .map((item) => {
+          return item.productNum * item.salePrice
+        })
+        .reduce((acc, cur) => {
+          console.log(acc)
+          return acc + cur
+        }, 0)
+      }
     },
     methods: {
       enter () {
 
+      },
+      preious () {
+        this.$router.back()
       }
     },
     components: {
