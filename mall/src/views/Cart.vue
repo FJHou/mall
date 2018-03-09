@@ -48,18 +48,49 @@
           })
         },
         toggleCheck (item) {
-          item.checked = !item.checked
+          let checked = item.checked
+          axios.post('apis/users/cartEdit', {
+            productId: item.productId,
+            productNum: item.productNum,
+            checked: !checked
+          }).then((res) => {
+            if (res.data.status === '0') {
+              item.checked = !checked
+            }
+          })
         },
         cartIncrease (item) {
-          item.productNum++
+          console.log(item)
+          let num = item.productNum
+          axios.post('apis/users/cartEdit', {
+            productId: item.productId,
+            productNum: num + 1,
+            checked: item.checked
+          }).then((res) => {
+            if (res.data.status === '0') {
+              item.productNum++
+            }
+          })
+          // item.productNum++
         },
         cartDecrease (item) {
+          let num = item.productNum
           if (item.productNum <= 1) {
             // 调删除接口
             // this.delGoods()
             return
           }
-          item.productNum--
+          
+          axios.post('apis/users/cartEdit', {
+            productId: item.productId,
+            productNum: num - 1,
+            checked: item.checked
+          }).then((res) => {
+            if (res.data.status === '0') {
+              item.productNum--
+            }
+          })
+          console.log(item)
         },
         countTotalPrice () {
           this.totalPrice = this.cartList.map((item) => {
@@ -82,6 +113,11 @@
             }
           })
         },
+
+        _editCart () {
+
+        },
+
         delGoods (id) {
           axios.post('apis/users/delGoods', {
             productId: id

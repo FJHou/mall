@@ -113,6 +113,38 @@ router.post('/delGoods', (req, res, next) => {
   )
 })
 
+router.post('/cartEdit', (req, res, next) => {
+  let userId = req.cookies.userId,
+    productId = req.body.productId,
+    productNum = req.body.productNum,
+    checked = req.body.checked;
+    User.update(
+      {
+        userId: userId, "cartList.productId": productId
+      }, 
+      {
+        "cartList.$.productNum": productNum,
+        "cartList.$.checked": checked
+      }, 
+      (err, doc) => {
+        if (err) {
+          res.json({
+            status: '1',
+            msg: err.message
+          })
+    
+          return
+        }
+        if (doc) {
+          res.json({
+            status: '0',
+            msg: '编辑成功'
+          })
+        } 
+      }     
+    )
+})
+
 router.post('/addressList', (req, res, next) => {
   let userId = req.cookies.userId
   User.findOne({userId: userId}, (err, doc) => {
@@ -140,7 +172,7 @@ router.post('/addressList', (req, res, next) => {
 router.post('/addressSetDefault', (req, res, next) => {
   let userId = req.cookies.userId;
   let addressId = req.body.addressId;
-  // console.log(addressId)
+
   User.findOne(
     {
       userId: userId
@@ -242,6 +274,16 @@ router.post('/getOrderList', (req, res, next) => {
       })
     }
   })
+})
+
+router.get('/getOrderDetails', (req, res, next) => {
+  let orderId = req.body.orderId;
+  User.findOne({})
+})
+
+router.post('/payment', (req, res, next) => {
+  let userId = req.cookies.userId,
+    // orderTotal
 })
 
 module.exports = router;

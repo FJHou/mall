@@ -40,7 +40,7 @@
           <ul>
             <li class="cur"><span>Confirm</span> address</li>
             <li class="cur"><span>View your</span> order</li>
-            <li><span>Make</span> payment</li>
+            <li class="cur"><span>Make</span> payment</li>
             <li><span>Order</span> confirmation</li>
           </ul>
         </div>
@@ -145,10 +145,12 @@
       axios.post('apis/users/getCartList', {
         userId: '100000077'
       }).then((res) => {
-        console.log(res)
         if (res.data.status === '0') {
-          console.log(res.data.result)
-          this.orderList = res.data.result
+          this.orderList = res.data.result.filter((item) => {
+            if (item.checked) {
+              return item
+            }
+          })
         }
       })
     },
@@ -159,14 +161,18 @@
           return item.productNum * item.salePrice
         })
         .reduce((acc, cur) => {
-          console.log(acc)
           return acc + cur
         }, 0)
       }
     },
     methods: {
       enter () {
-
+        this.$router.push({
+          path: '/orderSuccess',
+          query: {
+            orderId: '2'
+          }
+        })
       },
       preious () {
         this.$router.back()
