@@ -282,7 +282,7 @@ router.get('/getOrderDetails', (req, res, next) => {
 })
 
 router.post('/payment', (req, res, next) => {
-  let userId = req.cookies.userId,
+  let userId = req.cookies.userId
     // orderTotal
 })
 
